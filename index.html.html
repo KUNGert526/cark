@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yahya Kemal Şans Çarkı</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,900&family=Poppins:wght@400;900&display=swap');
+
+        body {
+            background: linear-gradient(rgba(2, 6, 23, 0.94), rgba(2, 6, 23, 0.98)), 
+                        url('https://upload.wikimedia.org/wikipedia/commons/e/ea/Yahya_Kemal_Beyatli.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #f8fafc;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .serif-font { font-family: 'Playfair Display', serif; }
+
+        .header-box {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            z-index: 50;
+        }
+
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-top: 140px;
+            padding-bottom: 50px;
+        }
+
+        .wheel-stage {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @media (min-width: 640px) {
+            .wheel-stage { width: 420px; height: 420px; }
+        }
+
+        .flipper {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 45px;
+            background: #ffffff;
+            clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+            z-index: 100;
+            transform-origin: 50% 0%;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+            border: 2px solid #ef4444;
+        }
+
+        .flipper.tick {
+            animation: flipper-kick 0.1s ease-out;
+        }
+
+        @keyframes flipper-kick {
+            0% { transform: translateX(-50%) rotate(0deg); }
+            50% { transform: translateX(-50%) rotate(-20deg); }
+            100% { transform: translateX(-50%) rotate(0deg); }
+        }
+
+        .wheel-outer {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 10px solid #1e293b;
+            position: relative;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+
+        #wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+            transition: transform 8s cubic-bezier(0.15, 0, 0.15, 1);
+        }
+
+        .name-wrapper {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 2px;
+            height: 50%;
+            transform-origin: 50% 100%;
+            display: flex;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .name-text {
+            position: absolute;
+            top: 20px;
+            transform: rotate(0deg);
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            font-size: 14px;
+            font-weight: 900;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+            white-space: nowrap;
+            letter-spacing: 1px;
+        }
+
+        @media (min-width: 640px) {
+            .name-text { font-size: 16px; top: 30px; }
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.98);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(20px);
+            padding: 20px;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .btn-question {
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+        }
+
+        .btn-question:hover {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: #3b82f6;
+            transform: translateY(-8px);
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 3px;
+            height: 1em;
+            background: #3b82f6;
+            margin-left: 4px;
+            animation: blink 0.8s infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink { 50% { opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <div class="header-box">
+        <h1 class="text-3xl md:text-4xl font-black mb-2 serif-font italic text-blue-500">YAHYA KEMAL BEYATLI</h1>
+        <div class="h-8 flex justify-center items-center">
+            <span id="poemLine" class="text-sm md:text-lg text-slate-400 serif-font italic"></span><span class="cursor"></span>
+        </div>
+    </div>
+
+    <div class="main-container px-4">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 w-full max-w-6xl">
+            <button onclick="openModal('Deneme 1')" class="btn-question p-6 md:p-8 rounded-2xl text-lg md:text-xl font-bold text-white italic serif-font">Deneme 1</button>
+            <button onclick="openModal('Deneme 2')" class="btn-question p-6 md:p-8 rounded-2xl text-lg md:text-xl font-bold text-white italic serif-font">Deneme 2</button>
+            <button onclick="openModal('Deneme 3')" class="btn-question p-6 md:p-8 rounded-2xl text-lg md:text-xl font-bold text-white italic serif-font">Deneme 3</button>
+            <button onclick="openModal('Deneme 4')" class="btn-question p-6 md:p-8 rounded-2xl text-lg md:text-xl font-bold text-white italic serif-font">Deneme 4</button>
+            <button onclick="openModal('Deneme 5')" class="btn-question p-6 md:p-8 rounded-2xl text-lg md:text-xl font-bold text-white italic serif-font">Deneme 5</button>
+        </div>
+    </div>
+
+    <div id="mainModal" class="modal-overlay">
+        <div class="w-full max-w-xl text-center flex flex-col items-center">
+            
+            <div id="prepView" class="w-full flex flex-col items-center">
+                <div class="mb-8">
+                    <p class="text-blue-500 font-black tracking-widest text-xs uppercase mb-1">Mevzu</p>
+                    <h2 id="modalTitle" class="text-3xl md:text-4xl font-black text-white serif-font italic"></h2>
+                </div>
+
+                <div class="wheel-stage mb-8">
+                    <div id="flipper" class="flipper"></div>
+                    <div class="wheel-outer">
+                        <div id="wheel"></div>
+                    </div>
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 bg-slate-900 rounded-full z-[60] border-4 border-slate-700 flex items-center justify-center">
+                        <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                    </div>
+                </div>
+
+                <button id="spinBtn" onclick="startSpin()" class="w-64 bg-blue-600 hover:bg-blue-500 py-5 rounded-2xl text-white font-black text-xl tracking-widest uppercase transition-all shadow-xl shadow-blue-900/30">
+                    ÇEVİR!
+                </button>
+            </div>
+
+            <div id="resultView" class="hidden w-full">
+                <div class="bg-slate-900 border border-slate-800 p-8 md:p-16 rounded-[2.5rem] md:rounded-[3.5rem] shadow-2xl mb-10">
+                    <p class="text-blue-500 text-xs font-black tracking-[0.5em] uppercase mb-4">Talihli</p>
+                    <p id="winnerName" class="text-4xl md:text-6xl font-black text-white mb-6 serif-font"></p>
+                    <div class="h-px bg-slate-800 w-full mb-6"></div>
+                    <p id="resultTopic" class="text-slate-400 italic text-lg"></p>
+                </div>
+                <button onclick="closeModal()" class="bg-white text-slate-900 px-12 py-4 rounded-xl font-black text-lg hover:bg-blue-500 hover:text-white transition-all">
+                    BAŞA DÖN
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playTick() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const duration = 0.04;
+            const bufferSize = audioCtx.sampleRate * duration;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+
+            const source = audioCtx.createBufferSource();
+            source.buffer = buffer;
+
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.setValueAtTime(2800, audioCtx.currentTime);
+            filter.Q.setValueAtTime(10, audioCtx.currentTime);
+
+            const gain = audioCtx.createGain();
+            gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+            source.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+            source.start();
+        }
+
+        const poems = [
+            "Artık demir almak günü gelmişse zamandan...",
+            "Meçhule giden bir gemi kalkar bu limandan.",
+            "Dünyada sevilmiş ve seven nafile bekler.",
+            "Sana dün bir tepeden baktım aziz İstanbul!",
+            "Bin atlı akınlarda çocuklar gibi şendik...",
+            "Ölüm asude bahar ülcesidir bir rinde."
+        ];
+        let pIdx = 0, cIdx = 0;
+        const pEl = document.getElementById('poemLine');
+
+        function typewriter() {
+            if (cIdx < poems[pIdx].length) {
+                pEl.textContent += poems[pIdx].charAt(cIdx++);
+                setTimeout(typewriter, 60);
+            } else setTimeout(erase, 2500);
+        }
+
+        function erase() {
+            if (cIdx > 0) {
+                pEl.textContent = poems[pIdx].substring(0, --cIdx);
+                setTimeout(erase, 30);
+            } else {
+                pIdx = (pIdx + 1) % poems.length;
+                setTimeout(typewriter, 400);
+            }
+        }
+
+        const masterNames = ["Amine", "Ali Osman", "Nabik", "İrem", "Ayşegül", "Zeynep", "Burcu", "Yağmur", "Nisa", "Meryem", "Zehra"];
+        let availableNames = [...masterNames];
+        const palette = ["#ef4444", "#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899", "#06b6d4", "#f97316", "#0ea5e9", "#d946ef", "#84cc16"];
+        
+        let spinning = false, topic = "";
+
+        function initWheel() {
+            const wheel = document.getElementById('wheel');
+            wheel.innerHTML = '';
+            
+            if (availableNames.length === 0) {
+                availableNames = [...masterNames];
+            }
+
+            const step = 360 / availableNames.length;
+            let gradientParts = [];
+
+            availableNames.forEach((name, i) => {
+                const startAngle = i * step;
+                const endAngle = (i + 1) * step;
+                gradientParts.push(`${palette[i % palette.length]} ${startAngle}deg ${endAngle}deg`);
+                
+                const wrap = document.createElement('div');
+                wrap.className = 'name-wrapper';
+                wrap.style.transform = `rotate(${startAngle + (step / 2)}deg)`;
+                
+                const t = document.createElement('span');
+                t.className = 'name-text';
+                t.textContent = name;
+                wrap.appendChild(t);
+                wheel.appendChild(wrap);
+            });
+            wheel.style.background = `conic-gradient(from 0deg, ${gradientParts.join(',')})`;
+        }
+
+        function openModal(t) {
+            topic = t;
+            document.getElementById('modalTitle').textContent = t;
+            document.getElementById('mainModal').classList.add('active');
+            document.getElementById('prepView').classList.remove('hidden');
+            document.getElementById('resultView').classList.add('hidden');
+            
+            initWheel();
+
+            const w = document.getElementById('wheel');
+            w.style.transition = 'none';
+            w.style.transform = 'rotate(0deg)';
+            document.getElementById('spinBtn').disabled = false;
+        }
+
+        function startSpin() {
+            if (spinning || availableNames.length === 0) return;
+            spinning = true;
+            document.getElementById('spinBtn').disabled = true;
+
+            const w = document.getElementById('wheel');
+            const flip = document.getElementById('flipper');
+            const step = 360 / availableNames.length;
+            
+            const winIdx = Math.floor(Math.random() * availableNames.length);
+            
+            const fullRounds = 10; 
+            const stopAngle = 360 - (winIdx * step + (step / 2));
+            const totalRotation = (fullRounds * 360) + stopAngle;
+
+            let lastTickAngle = 0;
+            const duration = 8000;
+            const start = performance.now();
+
+            function updateTick(now) {
+                const elapsed = now - start;
+                const progress = Math.min(elapsed / duration, 1);
+                const currentEase = 1 - Math.pow(1 - progress, 5);
+                const currentAngle = currentEase * totalRotation;
+
+                if (Math.floor(currentAngle / step) > Math.floor(lastTickAngle / step)) {
+                    playTick();
+                    flip.classList.remove('tick');
+                    void flip.offsetWidth;
+                    flip.classList.add('tick');
+                }
+                
+                lastTickAngle = currentAngle;
+                if (progress < 1) requestAnimationFrame(updateTick);
+            }
+
+            requestAnimationFrame(updateTick);
+            
+            w.style.transition = `transform ${duration}ms cubic-bezier(0.15, 0, 0.15, 1)`;
+            w.style.transform = `rotate(${totalRotation}deg)`;
+
+            setTimeout(() => {
+                spinning = false;
+                confetti({ 
+                    particleCount: 150, 
+                    spread: 70, 
+                    origin: { y: 0.6 },
+                    colors: ['#3b82f6', '#ffffff', '#ef4444']
+                });
+                
+                const winner = availableNames[winIdx];
+                availableNames.splice(winIdx, 1);
+                
+                document.getElementById('prepView').classList.add('hidden');
+                document.getElementById('resultView').classList.remove('hidden');
+                document.getElementById('winnerName').textContent = winner;
+                document.getElementById('resultTopic').textContent = `"${topic}" üzerine konuşacak.`;
+            }, duration + 500);
+        }
+
+        function closeModal() {
+            document.getElementById('mainModal').classList.remove('active');
+            spinning = false;
+        }
+
+        window.onload = () => { 
+            typewriter(); 
+        };
+    </script>
+</body>
+</html>
