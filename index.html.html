@@ -10,7 +10,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,900&family=Poppins:wght@400;900&display=swap');
 
         body {
-            background: linear-gradient(rgba(2, 6, 23, 0.94), rgba(2, 6, 23, 0.98)), 
+            background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.8)), 
                         url('https://upload.wikimedia.org/wikipedia/commons/e/ea/Yahya_Kemal_Beyatli.jpg');
             background-size: cover;
             background-position: center;
@@ -29,14 +29,14 @@
         .serif-font { font-family: 'Playfair Display', serif; }
 
         .header-box {
-            position: fixed;
+            position: absolute;
             top: 0;
             width: 100%;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(8px);
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
             padding: 1.5rem;
             text-align: center;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
             z-index: 50;
         }
 
@@ -50,32 +50,83 @@
             padding-bottom: 50px;
         }
 
+        .question-card {
+            position: relative;
+            width: 100%;
+            height: 160px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .gelatin-layer {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #94a3b8 0%, #475569 50%, #1e293b 100%);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.5s ease-out;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .gelatin-layer::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .revealed-content {
+            position: absolute;
+            inset: 0;
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(8px);
+            border: 2px solid #3b82f6;
+            border-radius: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            text-align: center;
+            z-index: 5;
+        }
+
         .wheel-stage {
             position: relative;
-            width: 320px;
-            height: 320px;
+            width: 380px;
+            height: 380px;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        @media (min-width: 640px) {
-            .wheel-stage { width: 420px; height: 420px; }
-        }
-
         .flipper {
             position: absolute;
-            top: -20px;
+            top: -15px;
             left: 50%;
             transform: translateX(-50%);
-            width: 30px;
-            height: 45px;
-            background: #ffffff;
+            width: 40px;
+            height: 50px;
+            background: #ef4444;
             clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
             z-index: 100;
             transform-origin: 50% 0%;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
-            border: 2px solid #ef4444;
         }
 
         .flipper.tick {
@@ -84,7 +135,7 @@
 
         @keyframes flipper-kick {
             0% { transform: translateX(-50%) rotate(0deg); }
-            50% { transform: translateX(-50%) rotate(-20deg); }
+            50% { transform: translateX(-50%) rotate(-25deg); }
             100% { transform: translateX(-50%) rotate(0deg); }
         }
 
@@ -94,7 +145,7 @@
             border-radius: 50%;
             border: 10px solid #1e293b;
             position: relative;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            box-shadow: 0 0 50px rgba(0,0,0,0.6);
             overflow: hidden;
         }
 
@@ -103,37 +154,44 @@
             height: 100%;
             border-radius: 50%;
             position: relative;
-            transition: transform 8s cubic-bezier(0.15, 0, 0.15, 1);
         }
 
         .name-wrapper {
             position: absolute;
-            top: 0;
+            top: 50%;
             left: 50%;
-            width: 2px;
-            height: 50%;
-            transform-origin: 50% 100%;
+            width: 50%;
+            height: 0;
+            transform-origin: left center;
             display: flex;
-            justify-content: center;
-            pointer-events: none;
+            align-items: center;
+            justify-content: flex-end;
         }
 
         .name-text {
-            position: absolute;
-            top: 20px;
-            transform: rotate(0deg);
-            writing-mode: vertical-rl;
-            text-orientation: mixed;
-            font-size: 14px;
+            display: inline-block;
+            padding-right: 30px;
+            font-size: 12px;
             font-weight: 900;
             color: white;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
-            white-space: nowrap;
-            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 4px rgba(0,0,0,1);
         }
 
-        @media (min-width: 640px) {
-            .name-text { font-size: 16px; top: 30px; }
+        .wheel-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/e/ea/Yahya_Kemal_Beyatli.jpg');
+            background-size: cover;
+            background-position: center;
+            border: 4px solid #1e293b;
+            z-index: 60;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
         }
 
         .modal-overlay {
@@ -145,23 +203,11 @@
             align-items: center;
             justify-content: center;
             backdrop-filter: blur(20px);
+            overflow-y: auto;
             padding: 20px;
         }
 
         .modal-overlay.active { display: flex; }
-
-        .btn-question {
-            background: rgba(30, 41, 59, 0.4);
-            border: 1px solid rgba(255,255,255,0.05);
-            backdrop-filter: blur(10px);
-            transition: all 0.4s ease;
-        }
-
-        .btn-question:hover {
-            background: rgba(59, 130, 246, 0.15);
-            border-color: #3b82f6;
-            transform: translateY(-8px);
-        }
 
         .cursor {
             display: inline-block;
@@ -170,67 +216,114 @@
             background: #3b82f6;
             margin-left: 4px;
             animation: blink 0.8s infinite;
-            vertical-align: middle;
         }
-
         @keyframes blink { 50% { opacity: 0; } }
+
+        @media (max-width: 768px) {
+            .wheel-stage { width: 280px; height: 280px; }
+            .name-text { font-size: 9px; padding-right: 20px; }
+            .wheel-center { width: 60px; height: 60px; }
+        }
     </style>
 </head>
 <body>
 
     <div class="header-box">
-        <h1 class="text-3xl md:text-4xl font-black mb-2 serif-font italic text-blue-500">YAHYA KEMAL BEYATLI</h1>
-        <div class="h-8 flex justify-center items-center">
-            <span id="poemLine" class="text-sm md:text-lg text-slate-400 serif-font italic"></span><span class="cursor"></span>
+        <h1 class="text-4xl font-black mb-2 serif-font italic text-blue-500 tracking-tighter">YAHYA KEMAL BEYATLI</h1>
+        <div class="h-8">
+            <span id="poemLine" class="text-lg text-slate-300 serif-font italic"></span><span class="cursor"></span>
         </div>
     </div>
 
-    <div class="main-container px-4">
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 w-full max-w-6xl">
-            <button onclick="openModal('Deneme 1')" class="btn-question p-6 md:p-8 rounded-2xl text-lg md:text-xl font-bold text-white italic serif-font">Deneme 1</button>
-            <button onclick="openModal('Deneme 2')" class="btn-question p-6 md:p-8 rounded-2xl text-lg md:text-xl font-bold text-white italic serif-font">Deneme 2</button>
-            <button onclick="openModal('Deneme 3')" class="btn-question p-6 md:p-8 rounded-2xl text-lg md:text-xl font-bold text-white italic serif-font">Deneme 3</button>
-            <button onclick="openModal('Deneme 4')" class="btn-question p-6 md:p-8 rounded-2xl text-lg md:text-xl font-bold text-white italic serif-font">Deneme 4</button>
-            <button onclick="openModal('Deneme 5')" class="btn-question p-6 md:p-8 rounded-2xl text-lg md:text-xl font-bold text-white italic serif-font">Deneme 5</button>
+    <div class="main-container px-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
+            <div class="question-card" onclick="handleCardClick(this)">
+                <div class="gelatin-layer">
+                    <span class="text-4xl font-black text-white/20">1</span>
+                    <p class="text-xs font-bold text-slate-400 mt-2">TIKLA VE KAZI</p>
+                </div>
+                <div class="revealed-content">
+                    <p class="text-white font-medium text-sm serif-font italic mb-4">Yahya Kemal’in Balkanlarda doğmuş olması, şiirlerinde hangi temel duyguların oluşmasına neden olmuştur?</p>
+                    <span class="bg-blue-600 text-white px-4 py-1 rounded-full text-[10px] font-bold">ÇARKI AÇ</span>
+                </div>
+            </div>
+
+            <div class="question-card" onclick="handleCardClick(this)">
+                <div class="gelatin-layer">
+                    <span class="text-4xl font-black text-white/20">2</span>
+                    <p class="text-xs font-bold text-slate-400 mt-2">TIKLA VE KAZI</p>
+                </div>
+                <div class="revealed-content">
+                    <p class="text-white font-medium text-sm serif-font italic mb-4">Cumhuriyet Dönemi Türk şiirinde öne çıkan üç şair söyleyebilir misiniz?</p>
+                    <span class="bg-blue-600 text-white px-4 py-1 rounded-full text-[10px] font-bold">ÇARKI AÇ</span>
+                </div>
+            </div>
+
+            <div class="question-card" onclick="handleCardClick(this)">
+                <div class="gelatin-layer">
+                    <span class="text-4xl font-black text-white/20">3</span>
+                    <p class="text-xs font-bold text-slate-400 mt-2">TIKLA VE KAZI</p>
+                </div>
+                <div class="revealed-content">
+                    <p class="text-white font-medium text-sm serif-font italic mb-4">Yahya Kemal’in şiirlerini sağlığında kitaplaştırmamasının temel nedeni nedir?</p>
+                    <span class="bg-blue-600 text-white px-4 py-1 rounded-full text-[10px] font-bold">ÇARKI AÇ</span>
+                </div>
+            </div>
+
+            <div class="question-card" onclick="handleCardClick(this)">
+                <div class="gelatin-layer">
+                    <span class="text-4xl font-black text-white/20">4</span>
+                    <p class="text-xs font-bold text-slate-400 mt-2">TIKLA VE KAZI</p>
+                </div>
+                <div class="revealed-content">
+                    <p class="text-white font-medium text-sm serif-font italic mb-4">Saf (Öz) şiir anlayışına göre şiirin temel amacı nedir?</p>
+                    <span class="bg-blue-600 text-white px-4 py-1 rounded-full text-[10px] font-bold">ÇARKI AÇ</span>
+                </div>
+            </div>
+
+            <div class="question-card" onclick="handleCardClick(this)">
+                <div class="gelatin-layer">
+                    <span class="text-4xl font-black text-white/20">5</span>
+                    <p class="text-xs font-bold text-slate-400 mt-2">TIKLA VE KAZI</p>
+                </div>
+                <div class="revealed-content">
+                    <p class="text-white font-medium text-sm serif-font italic mb-4">Yahya Kemal Beyatlı kaç yılında vefat etmiştir?</p>
+                    <span class="bg-blue-600 text-white px-4 py-1 rounded-full text-[10px] font-bold">ÇARKI AÇ</span>
+                </div>
+            </div>
         </div>
     </div>
 
     <div id="mainModal" class="modal-overlay">
-        <div class="w-full max-w-xl text-center flex flex-col items-center">
-            
+        <div class="w-full max-w-2xl text-center flex flex-col items-center py-8">
             <div id="prepView" class="w-full flex flex-col items-center">
-                <div class="mb-8">
-                    <p class="text-blue-500 font-black tracking-widest text-xs uppercase mb-1">Mevzu</p>
-                    <h2 id="modalTitle" class="text-3xl md:text-4xl font-black text-white serif-font italic"></h2>
+                <div class="mb-6 px-4">
+                    <p class="text-blue-500 font-black tracking-widest text-xs uppercase mb-1">Soru</p>
+                    <h2 id="modalTitle" class="text-xl md:text-2xl font-black text-white serif-font italic leading-tight"></h2>
                 </div>
-
                 <div class="wheel-stage mb-8">
                     <div id="flipper" class="flipper"></div>
                     <div class="wheel-outer">
                         <div id="wheel"></div>
                     </div>
-                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 bg-slate-900 rounded-full z-[60] border-4 border-slate-700 flex items-center justify-center">
-                        <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                    </div>
+                    <div class="wheel-center"></div>
                 </div>
-
-                <button id="spinBtn" onclick="startSpin()" class="w-64 bg-blue-600 hover:bg-blue-500 py-5 rounded-2xl text-white font-black text-xl tracking-widest uppercase transition-all shadow-xl shadow-blue-900/30">
-                    ÇEVİR!
+                <button id="spinBtn" onclick="startSpin()" class="w-64 bg-blue-600 hover:bg-blue-500 py-4 rounded-xl text-white font-black text-lg tracking-widest uppercase transition-all shadow-xl active:scale-95">
+                    ÇARKI ÇEVİR!
                 </button>
             </div>
 
-            <div id="resultView" class="hidden w-full">
-                <div class="bg-slate-900 border border-slate-800 p-8 md:p-16 rounded-[2.5rem] md:rounded-[3.5rem] shadow-2xl mb-10">
-                    <p class="text-blue-500 text-xs font-black tracking-[0.5em] uppercase mb-4">Talihli</p>
-                    <p id="winnerName" class="text-4xl md:text-6xl font-black text-white mb-6 serif-font"></p>
+            <div id="resultView" class="hidden w-full px-4">
+                <div class="bg-slate-900 border border-slate-800 p-8 md:p-12 rounded-[2.5rem] shadow-2xl mb-8 w-full">
+                    <p class="text-blue-500 text-xs font-black tracking-[0.5em] uppercase mb-4">Cevaplayacak Öğrenci</p>
+                    <p id="winnerName" class="text-4xl md:text-6xl font-black text-white mb-6 serif-font italic"></p>
                     <div class="h-px bg-slate-800 w-full mb-6"></div>
-                    <p id="resultTopic" class="text-slate-400 italic text-lg"></p>
+                    <p class="text-slate-400 italic text-lg">Başarılar dileriz.</p>
                 </div>
-                <button onclick="closeModal()" class="bg-white text-slate-900 px-12 py-4 rounded-xl font-black text-lg hover:bg-blue-500 hover:text-white transition-all">
+                <button onclick="closeModal()" class="bg-white text-slate-900 px-12 py-3 rounded-xl font-black text-md hover:bg-blue-600 hover:text-white transition-all">
                     BAŞA DÖN
                 </button>
             </div>
-
         </div>
     </div>
 
@@ -239,41 +332,24 @@
         
         function playTick() {
             if (audioCtx.state === 'suspended') audioCtx.resume();
-            
-            const duration = 0.04;
-            const bufferSize = audioCtx.sampleRate * duration;
-            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-            const data = buffer.getChannelData(0);
-            
-            for (let i = 0; i < bufferSize; i++) {
-                data[i] = Math.random() * 2 - 1;
-            }
-
-            const source = audioCtx.createBufferSource();
-            source.buffer = buffer;
-
-            const filter = audioCtx.createBiquadFilter();
-            filter.type = 'bandpass';
-            filter.frequency.setValueAtTime(2800, audioCtx.currentTime);
-            filter.Q.setValueAtTime(10, audioCtx.currentTime);
-
+            const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
-            gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-
-            source.connect(filter);
-            filter.connect(gain);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(160, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+            osc.connect(gain);
             gain.connect(audioCtx.destination);
-            source.start();
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.08);
         }
 
         const poems = [
             "Artık demir almak günü gelmişse zamandan...",
             "Meçhule giden bir gemi kalkar bu limandan.",
-            "Dünyada sevilmiş ve seven nafile bekler.",
             "Sana dün bir tepeden baktım aziz İstanbul!",
-            "Bin atlı akınlarda çocuklar gibi şendik...",
-            "Ölüm asude bahar ülcesidir bir rinde."
+            "Baktım deniz de kalmadı, gök de kalmadı...",
+            "Bin atlı akınlarda çocuklar gibi şendik."
         ];
         let pIdx = 0, cIdx = 0;
         const pEl = document.getElementById('poemLine');
@@ -281,7 +357,7 @@
         function typewriter() {
             if (cIdx < poems[pIdx].length) {
                 pEl.textContent += poems[pIdx].charAt(cIdx++);
-                setTimeout(typewriter, 60);
+                setTimeout(typewriter, 70);
             } else setTimeout(erase, 2500);
         }
 
@@ -291,127 +367,119 @@
                 setTimeout(erase, 30);
             } else {
                 pIdx = (pIdx + 1) % poems.length;
-                setTimeout(typewriter, 400);
+                setTimeout(typewriter, 500);
             }
         }
 
-        const masterNames = ["Amine", "Ali Osman", "Nabik", "İrem", "Ayşegül", "Zeynep", "Burcu", "Yağmur", "Nisa", "Meryem", "Zehra"];
-        let availableNames = [...masterNames];
-        const palette = ["#ef4444", "#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899", "#06b6d4", "#f97316", "#0ea5e9", "#d946ef", "#84cc16"];
+        let students = ["Amine", "Ali Osman", "Nabik", "İrem", "Ayşegül", "Zeynep", "Burcu", "Yağmur", "Nisa", "Meryem", "Zehra"];
+        let remaining = [...students];
+        const colors = ["#ef4444", "#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899", "#06b6d4", "#f97316"];
         
-        let spinning = false, topic = "";
+        let spinning = false;
 
-        function initWheel() {
+        function handleCardClick(card) {
+            const gelatin = card.querySelector('.gelatin-layer');
+            const questionText = card.querySelector('.revealed-content p').innerText;
+
+            if (!card.classList.contains('revealed')) {
+                gelatin.style.opacity = '0';
+                gelatin.style.pointerEvents = 'none';
+                card.classList.add('revealed');
+                playTick();
+            } else {
+                openModal(questionText);
+            }
+        }
+
+        function buildWheel() {
             const wheel = document.getElementById('wheel');
             wheel.innerHTML = '';
+            if (remaining.length === 0) remaining = [...students];
             
-            if (availableNames.length === 0) {
-                availableNames = [...masterNames];
-            }
+            const slice = 360 / remaining.length;
+            let grads = [];
 
-            const step = 360 / availableNames.length;
-            let gradientParts = [];
-
-            availableNames.forEach((name, i) => {
-                const startAngle = i * step;
-                const endAngle = (i + 1) * step;
-                gradientParts.push(`${palette[i % palette.length]} ${startAngle}deg ${endAngle}deg`);
-                
+            remaining.forEach((name, i) => {
+                grads.push(`${colors[i % colors.length]} ${i * slice}deg ${(i + 1) * slice}deg`);
                 const wrap = document.createElement('div');
                 wrap.className = 'name-wrapper';
-                wrap.style.transform = `rotate(${startAngle + (step / 2)}deg)`;
-                
+                wrap.style.transform = `rotate(${i * slice + slice/2 - 90}deg)`;
                 const t = document.createElement('span');
                 t.className = 'name-text';
                 t.textContent = name;
                 wrap.appendChild(t);
                 wheel.appendChild(wrap);
             });
-            wheel.style.background = `conic-gradient(from 0deg, ${gradientParts.join(',')})`;
+            wheel.style.background = `conic-gradient(from -90deg, ${grads.join(',')})`;
         }
 
-        function openModal(t) {
-            topic = t;
-            document.getElementById('modalTitle').textContent = t;
+        function openModal(title) {
+            document.getElementById('modalTitle').textContent = title;
             document.getElementById('mainModal').classList.add('active');
             document.getElementById('prepView').classList.remove('hidden');
             document.getElementById('resultView').classList.add('hidden');
             
-            initWheel();
-
             const w = document.getElementById('wheel');
             w.style.transition = 'none';
             w.style.transform = 'rotate(0deg)';
+            
+            buildWheel();
             document.getElementById('spinBtn').disabled = false;
         }
 
         function startSpin() {
-            if (spinning || availableNames.length === 0) return;
+            if (spinning || remaining.length === 0) return;
             spinning = true;
             document.getElementById('spinBtn').disabled = true;
 
             const w = document.getElementById('wheel');
             const flip = document.getElementById('flipper');
-            const step = 360 / availableNames.length;
+            const slice = 360 / remaining.length;
+            const winIdx = Math.floor(Math.random() * remaining.length);
             
-            const winIdx = Math.floor(Math.random() * availableNames.length);
-            
-            const fullRounds = 10; 
-            const stopAngle = 360 - (winIdx * step + (step / 2));
-            const totalRotation = (fullRounds * 360) + stopAngle;
+            const targetRotation = (10 * 360) + (360 - (winIdx * slice) - (slice / 2));
 
-            let lastTickAngle = 0;
-            const duration = 8000;
+            let lastTick = 0;
             const start = performance.now();
+            const dur = 8000;
 
-            function updateTick(now) {
-                const elapsed = now - start;
-                const progress = Math.min(elapsed / duration, 1);
-                const currentEase = 1 - Math.pow(1 - progress, 5);
-                const currentAngle = currentEase * totalRotation;
+            function update(now) {
+                const prog = Math.min((now - start) / dur, 1);
+                const ease = 1 - Math.pow(1 - prog, 4);
+                const curRot = ease * targetRotation;
 
-                if (Math.floor(currentAngle / step) > Math.floor(lastTickAngle / step)) {
+                if (Math.floor(curRot / slice) > Math.floor(lastTick / slice)) {
                     playTick();
                     flip.classList.remove('tick');
                     void flip.offsetWidth;
                     flip.classList.add('tick');
                 }
-                
-                lastTickAngle = currentAngle;
-                if (progress < 1) requestAnimationFrame(updateTick);
+                lastTick = curRot;
+                if (prog < 1) requestAnimationFrame(update);
             }
+            requestAnimationFrame(update);
 
-            requestAnimationFrame(updateTick);
-            
-            w.style.transition = `transform ${duration}ms cubic-bezier(0.15, 0, 0.15, 1)`;
-            w.style.transform = `rotate(${totalRotation}deg)`;
+            w.style.transition = 'transform 8s cubic-bezier(0.15, 0, 0.15, 1)';
+            w.style.transform = `rotate(${targetRotation}deg)`;
 
             setTimeout(() => {
                 spinning = false;
-                confetti({ 
-                    particleCount: 150, 
-                    spread: 70, 
-                    origin: { y: 0.6 },
-                    colors: ['#3b82f6', '#ffffff', '#ef4444']
-                });
-                
-                const winner = availableNames[winIdx];
-                availableNames.splice(winIdx, 1);
-                
+                confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
+                const winner = remaining[winIdx];
+                document.getElementById('winnerName').textContent = winner;
+                remaining.splice(winIdx, 1);
                 document.getElementById('prepView').classList.add('hidden');
                 document.getElementById('resultView').classList.remove('hidden');
-                document.getElementById('winnerName').textContent = winner;
-                document.getElementById('resultTopic').textContent = `"${topic}" üzerine konuşacak.`;
-            }, duration + 500);
+            }, 8500);
         }
 
         function closeModal() {
             document.getElementById('mainModal').classList.remove('active');
-            spinning = false;
         }
 
-        window.onload = () => { 
-            typewriter(); 
+        window.onload = () => {
+            typewriter();
+            buildWheel();
         };
     </script>
 </body>
